@@ -4,6 +4,7 @@ import { setShoppingLists } from './../features/shoppingListSlice';
 import axios from 'axios';
 import ShoppingList from './../ShoppingList';
 import ShoppingListForm from './../ShoppingListForm';
+import './../shoppingList.css'
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -18,14 +19,17 @@ const Home = () => {
   }, [dispatch]);
 
   return (
-    <div className="container mt-5">
+    <div className='top'>
       <h2>Your Shopping Lists</h2>
       <ShoppingListForm />
+    <div className="cont mt-5">
+      
       <div className="mt-3">
         {shoppingLists.map((list) => (
           <ShoppingList key={list.id} list={list} />
         ))}
       </div>
+    </div>
     </div>
   );
 };

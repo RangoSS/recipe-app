@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'; // Added useSelector to get current user
+import { useDispatch, useSelector } from 'react-redux';
 import { addShoppingList } from './features/shoppingListSlice';
 import axios from 'axios';
 
 const ShoppingListForm = () => {
   const dispatch = useDispatch();
-  
-  // Assuming you store the current user in the Redux state
-  const currentUser = useSelector((state) => state.auth.currentUser); // Replace this with the correct path to your auth slice
 
+  // Get the current user from the Redux state
+  const currentUser = useSelector((state) => state.auth.user.id); // Adjust the path based on your actual Redux state structure
+  console.log(currentUser);
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [notes, setNotes] = useState('');
@@ -17,30 +17,33 @@ const ShoppingListForm = () => {
 
   const handleAddShoppingList = async (e) => {
     e.preventDefault();
-
+    
     // Prepare data for POST request
     const shoppingListData = {
-      userId: currentUser?.id, // Include the current user's ID
+      userId: currentUser, // Include the current user's ID
       name,
       quantity,
       notes,
       category,
       image: image ? await convertToBase64(image) : null, // Convert image to base64
-     
     };
 
-    // POST the shopping list to the server
-    const response = await axios.post('http://localhost:3001/shoppingLists', shoppingListData);
-    
-    // Dispatch the action to add the shopping list to the Redux store
-    dispatch(addShoppingList(response.data));
+    try {
+      // POST the shopping list to the server
+      const response = await axios.post('http://localhost:3001/shoppingLists', shoppingListData);
+      
+      // Dispatch the action to add the shopping list to the Redux store
+      dispatch(addShoppingList(response.data));
 
-    // Reset form fields
-    setName('');
-    setQuantity('');
-    setNotes('');
-    setCategory('');
-    setImage(null);
+      // Reset form fields
+      setName('');
+      setQuantity('');
+      setNotes('');
+      setCategory('');
+      setImage(null);
+    } catch (error) {
+      console.error('Error adding shopping list:', error);
+    }
   };
 
   // Helper function to convert image file to base64
